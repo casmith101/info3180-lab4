@@ -2,9 +2,13 @@
 
 {% block main %}
     <h1>Uploaded Image Files</h1>
-    <ul>
-        {% for url in image_urls %}
-            <li><img src="{{ url }}" alt="Image"></li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <div class="image-container">
+            <ul>
+                {% for url in image_urls %}
+                    <li><img src="{{ url }}" alt="Image"></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>        
 {% endblock %}    

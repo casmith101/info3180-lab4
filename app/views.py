@@ -66,6 +66,7 @@ def get_image(filename):
 
 
 @app.route('/files')
+@login_required
 def files():
     # Call the helper function to get the list of uploaded image filenames
     filenames = get_uploaded_images()
