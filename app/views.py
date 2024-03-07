@@ -7,7 +7,7 @@ from app.models import UserProfile
 from app.forms import LoginForm
 from app.forms import UploadForm
 from werkzeug.security import check_password_hash
-
+from flask import send_from_directory
 ###
 # Routing for your application.
 ###
@@ -39,6 +39,40 @@ def upload():
         flash('File Saved', 'success')
         return redirect(url_for('home')) # Update this to redirect the user to a route that displays all uploaded image files
     return render_template('upload.html', form=form)
+
+
+def get_uploaded_images():
+    # Get the current working directory
+    rootdir = os.getcwd()
+    # Define the path to the uploads folder
+    uploads_folder = os.path.join(rootdir, 'uploads')
+    # Initialize an empty list to store filenames
+    filenames = []
+    # Iterate over the contents of the uploads folder
+    for subdir, dirs, files in os.walk(uploads_folder):
+        for file in files:
+            # Add the filename to the list
+            filenames.append(os.path.join(subdir, file))
+    # Return the list of filenames
+    return filenames
+
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    # Get the path to the upload folder
+    upload_folder = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'])
+    # Use send_from_directory to return the specified image
+    return send_from_directory(upload_folder, filename)
+
+
+@app.route('/files')
+def files():
+    # Call the helper function to get the list of uploaded image filenames
+    filenames = get_uploaded_images()
+    # Generate URLs for the images using url_for
+    image_urls = [url_for('get_image', filename=filename) for filename in filenames]
+    # Render the files.html template and pass the list of image filenames and their URLs
+    return render_template('files.html', image_urls=image_urls)
 
 
 @app.route('/login', methods=['POST', 'GET'])
